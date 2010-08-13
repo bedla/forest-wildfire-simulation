@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<head>
+<title>NetLogo Help: 
+          palette:scale-gradient
+        </title>
+
+    <link rel="stylesheet" href="http://ccl.northwestern.edu/netlogo/docs/netlogo.css" type="text/css">
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<style type="text/css">
+ p { margin-left: 1.5em ; }
+ h3 { font-size: 115% ; }
+ h4 { font-size: 100% ; margin-left: 1.5em ; background: white ; }
+</style>
+</head>
+<body>
+        <h3>
+          <a name="palette:scale-gradient" id="palette:scale-gradient">palette:scale-gradient</a>
+
+        </h3>
+        <h4>
+          scale-gradient <i>rgb-color-list number range1 range2</i>
+        </h4>
+        <p>
+          Reports an rgb color  proportional to <i>number</i> using a gradient generated with <i>rgb-color-list. </i>        An <i>rgb-color-list</i> consist of a list contaning rgb list with three values between 0 and 255: [[r1 g1 b1] [r2 g2 b2] [r3 g3 b3] ...]
+        <p>
+
+          If <i>range1</i> is less than <i>range2</i>, the color will be directly  mapped to gradient colors. While, if
+          <i>range2</i> is less than <i>range1</i>, the color gradient is
+          inverted.
+        <p>
+          If <i>number</i> is less than <i>range1</i>, then the first
+           color of is  <i>rgb-color-list </i>is chosen.
+        <p>If <i>number</i> is grater than <i>range2</i>, then the last
+           color of is <i>rgb-color-list </i>is chosen.
+        <pre>
+ask patches 
+[
+  set pcolor palette:scale-gradient [[255 0 0] [0 0 255]] pxcor min-pxcor max-pxcor
+]
+
+
+;; colors each patch with a color proportional to the gradient  </pre>
+      
+        <p>Take me to the full <a href="http://ccl.northwestern.edu/netlogo/docs/primindex.html">NetLogo Dictionary</a>
+</body>
+</html>
