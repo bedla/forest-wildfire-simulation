@@ -1,9 +1,0 @@
-Vyberte si v literatuøe (v pøednáškách, ve èláncích dostupných na webu) experiment alespoò se dvìma kooperujícími roboty.
-
-Seznamte se s principem a výsledky experimentu.
-
-Realizuje v NetLogu stejný nebo podobný experiment, tj. implementujte stejné (podobné) roboty, proveïte stejné (podobné) pokusy (napø. v nástroji BehaviorSpace) a interpretujte výsledky.
-
-Vypracujte dokumentaci – zejména popište pùvodní a váš experiment a nezapomeòte uvést odkazy na zdroje.
-
-Termíny: do 15.4. si zvolte téma a pøijïte je zkonzultovat na cvièení; do 15.5. odevzdejte projekt pøes WebCT. 
