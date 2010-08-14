@@ -1,0 +1,132 @@
+; vytvorime stromy
+to setup-trees
+  output-print (word "setup-trees start")
+  reset-timer
+  
+  ask trees
+  [
+    die
+  ]
+
+  let num-trees min (list (count middle-lands) tree-count )
+
+  ask n-of num-trees middle-lands
+  [
+    sprout-trees 1
+    [
+      set shape "tree"
+      set color green
+      set size 10
+      set points 100
+      set live? true
+      set burning? false
+      set dead? false
+      set found? false
+    ]
+  ]
+
+  output-print (word "setup-trees in " timer " s")
+end
+
+to trees-go
+
+  ask trees
+  [
+    ifelse live?
+    [
+      ; pokud se strom obzivuje
+      if points < 100
+      [
+        ; uzdravuj strom
+        set points points * tree-regrow-speed
+      ]
+      
+      set color linearni-interpolace points 50 100 51 55
+          
+      if (random-float 1) < fire-probability
+      [
+        set live? false
+        set burning? true
+        set dead? false
+        set shape "fire"
+        set color red
+      ]
+      
+      fire-jump
+    ]
+    [
+      ifelse burning?
+      [
+        ; usmrtime strom 
+        set points points * burn-speed
+        
+        set color linearni-interpolace points 0 100 11 15
+        
+        ; pokud je skoro mrtev
+        if points <= 0.1
+        [
+          ; udelame z nej spalenej strom
+          set burning? false
+          set dead? true
+          set shape "tree"
+          set color gray
+        ]
+      ]
+      [
+        if dead?
+        [
+          ; pokud se strom uzdravuje
+          ifelse points > 0
+          [
+            ; uzdravuj strom
+            set points points * tree-regrow-speed
+            
+            set color linearni-interpolace points 0 50 1 5
+            
+            ; pokud je strom skoro uzdraven
+            if points > 50
+            [
+              ; strom obzivne
+              set live? true
+              set burning? false
+              set dead? false
+              set found? false
+              set shape "tree"
+              set color green              
+            ]
+          ]
+          [ ; strom je mrtev
+            
+            ; zkusime ho trosku obzivit
+            if (random-float 1) < tree-regrow-probability
+            [
+              set points 1
+            ]
+          ]
+        ]
+      ]
+    ]
+  ]
+
+end
+
+
+to fire-jump
+  let treesInRadius trees with [ live? ] in-radius fire-jump-radius
+  if any? treesInRadius
+  [
+    if (random-float 1) < fire-jump-probability
+    [
+      ask n-of (1 + random count treesInRadius ) treesInRadius
+      [
+        set live? false
+        set burning? true
+        set dead? false
+        set shape "fire"
+        set color red     
+      ]
+    ]
+  ] 
+  
+  
+end
