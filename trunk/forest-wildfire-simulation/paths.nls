@@ -1,0 +1,200 @@
+; nastaveni promennych a vytvoreni hledace cest
+to paths-setup
+
+  ask finders
+  [
+    die
+  ]
+  ; vyberu jeden patch z nizin
+  ask one-of low-lands
+  [
+    ; vytvorim hledace cest
+    sprout-finders 1
+    [
+      set size 5
+      set color red
+      let thisNode nobody
+      
+      ; a vytvorim bazi
+      hatch-nodes 1
+      [
+        set shape "circle"
+        set size 20
+        set shape "fire department"
+        set color yellow
+        set node-parcel-x parcel-x
+        set node-parcel-y parcel-y
+        
+        let p-x parcel-x
+        let p-y parcel-y
+        
+        ask patches with [ parcel-x = p-x and parcel-y = p-y ]
+        [
+          set visited? true
+        ]
+       
+        set thisNode self
+      ]
+      set visited-list lput thisNode []
+      
+      set base thisNode
+       
+      set main-finder self
+    ]
+  ]
+  
+end
+
+
+
+; vytvoreni grafu cest, prohledavanim do hloubky
+; cesty se prioritne vytvareji v osmiokoli, ktere je spis v nizine
+to create-paths
+  output-print (word "create-paths start")
+  reset-timer
+  
+  while [ not empty? [ visited-list ] of main-finder ]
+  [
+
+    ask main-finder
+    [
+      if not empty? visited-list
+      [
+        let currentNode first visited-list
+        set visited-list but-first visited-list
+        
+        set xcor [ xcor ] of currentNode
+        set ycor [ ycor ] of currentNode
+        
+        let sousedi []
+        ; vytvorim seznam vsech patchu ve 4 sousedi
+        ;foreach ( list left-neighbors right-neighbors up-neighbors down-neighbors )
+        foreach ( list left-neighbors right-neighbors up-neighbors down-neighbors left-top-neighbors left-bottom-neighbors right-top-neighbors right-bottom-neighbors )
+        [
+          ; ale zaradim jen ty co nebyly navstiveni
+          if any? ? and not [ visited? ] of one-of ?
+          [
+            set sousedi lput ? sousedi
+          ]
+        ]
+      
+        set sousedi filter [ any? ? ] sousedi
+        ; zjistim parcelu, ktera je z nich nejmensi
+        let parcely min-parcels sousedi 0.3
+        
+        ; projdu vsechy vyhovojujici parcely
+        foreach parcely
+        [
+          ; presunu se na jeden patch z aktualni parcely
+          move-to one-of ?
+  
+          let thisNode nobody
+          hatch-nodes 1
+          [
+            set shape "circle"
+            set size 5
+            set color blue
+            set thisNode self
+            set node-parcel-x parcel-x
+            set node-parcel-y parcel-y
+          ]
+    
+          ask currentNode
+          [
+            ; obarvnime spojeni nacerveno
+            create-link-with thisNode
+            [
+              set color red
+            ]
+          ]
+          
+          set visited-list lput thisNode visited-list
+          ask ?
+          [
+            set visited? true
+          ]
+          
+        ]
+        
+      ]
+    ] ; end ask
+    
+  ] ; end while
+  
+  output-print (word "create-paths in " timer " s")
+end
+
+
+
+;to find-paths-go-do-hloubky
+;
+;  if all? patches [ visited? ]
+;  [
+;    stop
+;  ]
+;
+;  ask main-finder
+;  [
+;    let sousedi []
+;    ; vytvorim seznam vsech patchu ve 4 sousedi
+;    foreach ( list left-neighbors right-neighbors up-neighbors down-neighbors )
+;    [
+;      ; ale zaradim jen ty co nebyly navstiveni
+;      if any? ? and not [ visited? ] of one-of ?
+;      [
+;        set sousedi lput ? sousedi
+;      ]
+;    ]
+;    
+;    set sousedi filter [ any? ? ] sousedi
+;    ; zjistim parcelu, ktera je z nich nejmensi
+;    let parcela min-parcel sousedi
+;    
+;    ; pokud existuje nenavstivena parcela
+;    ifelse any? parcela
+;    [
+;      ; presun se na jeden nahodny patch z nenavstivene parcely
+;      move-to one-of parcela
+;      
+;      ; vytvorime vrchol
+;      let thisNode nobody
+;      hatch-nodes 1
+;      [
+;        set shape "circle"
+;        set size 5
+;        set color blue1
+;        set thisNode self
+;      ]
+;      
+;      ; spojime vrchol s poslednim prvkem v seznamu nalezenych vrcholu
+;      ask last visited-list
+;      [
+;        ; obarvnime spojeni na cerveno
+;        create-link-with thisNode
+;        [
+;          set color red
+;        ]
+;      ]
+;      
+;      ; ulozime vytvoreny vrchol na konec navstiveneho seznamu
+;      set visited-list lput thisNode visited-list
+;      ask parcela
+;      [
+;        set visited? true
+;      ]
+;    ]
+;    [ ; pokud uz zadnou nenavstivenou parcelu nevidim
+;      ; a seznam navstivenych vrcholu neni prazdny
+;      if not empty? visited-list
+;      [ 
+;        ; nacteme posledni navstiveny vrchol
+;        let posledni last visited-list
+;        ; zmenime pozici hledace
+;        set xcor [xcor] of posledni
+;        set ycor [ycor] of posledni
+;        ; a odebereme posledni navstiveny vrchol ze seznamu navstivenych vrcholu
+;        set visited-list but-last visited-list
+;      ]
+;    ]
+;  ]
+;end

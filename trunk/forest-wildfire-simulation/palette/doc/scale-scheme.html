@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<head>
+<title>NetLogo Help: 
+          palette:scale-scheme
+        </title>
+
+    <link rel="stylesheet" href="http://ccl.northwestern.edu/netlogo/docs/netlogo.css" type="text/css">
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<style type="text/css">
+ p { margin-left: 1.5em ; }
+ h3 { font-size: 115% ; }
+ h4 { font-size: 100% ; margin-left: 1.5em ; background: white ; }
+</style>
+</head>
+<body>
+        <h3>
+          <a name="palette:scale-scheme" id="palette:scale-scheme">palette:scale-scheme</a>
+
+        </h3>
+        <h4>
+          scale-scheme <i>scheme-type scheme-color number-of-classes number range1 range2</i>        </h4>
+<p>
+          Reports an rgb color  proportional to <i>number</i> using a <em>the color brewer schemes. It takes six argumenents </em>the first three arguments define the ColorBrewer legend. Fir the user should select a scheme-type wich can be &quot;Sequential&quot;, &quot;Divergent, Qualitative&quot;. Then it should select a variaty of scheme-colors wich depending on the scheme-color can have names such as &quot;Reds&quot;, &quot;Divergent&quot;, &quot;Set1&quot;. Finally the user should select the number of classes with a minimum of 3 and a maximum between 9 and 11. For more information go to <a href="http://www.colorbrewer.org">http://www.colorbrewer.org</a> or consult the scheme-dialog primitive.
+<p>
+
+          If <i>range1</i> is less than <i>range2</i>, the color will be directly  mapped to scheme colors. While, if
+          <i>range2</i> is less than <i>range1</i>, the color scheme selection is
+          inverted.
+        <p>
+          If <i>number</i> is less than <i>range1</i>, then the first
+           color of the resulting ColorBrewer legend is chosen.
+<p>If <i>number</i> is grater than <i>range2</i>, then the last
+           color of the resulting ColorBrewer legend<i> </i>is chosen.
+        <pre>
+ask patches 
+[
+  set pcolor palette:scale-scheme [[255 0 0] [0 0 255]] pxcor min-pxcor max-pxcor
+]
+
+
+;; colors each patch with a color from the Color Brewer Schemes  </pre>
+      
+        <p>Take me to the full <a href="http://ccl.northwestern.edu/netlogo/docs/primindex.html">NetLogo Dictionary</a>
+</body>
+</html>

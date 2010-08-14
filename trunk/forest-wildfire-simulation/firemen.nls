@@ -1,0 +1,170 @@
+to firemen-go
+
+  ask firemen
+  [
+    ifelse going-to-fire?
+    [
+      move-fireman
+      set color blue
+    ]
+    [
+      ifelse extinguishing?
+      [
+        stop-the-fire
+        set color red
+      ]
+      [
+        if returning-to-base?
+        [
+          move-fireman
+          set color yellow
+        ]
+      ]
+    ]    
+  ]
+end
+
+to move-fireman
+    let thisFinder self
+    let thisWho who
+     
+    ifelse empty? fire-path and new-location = nobody
+    [
+      ifelse going-to-fire?
+      [
+        fireman-is-on-fire
+      ]
+      [
+        if returning-to-base?
+        [
+          fireman-is-back-in-base
+        ]
+      ]
+    ]
+    [
+      if new-location = nobody
+      [ 
+        set new-location first fire-path
+        set fire-path but-first fire-path        
+      ]
+    
+      ; otocime agenta do nove lokace
+      face new-location
+      ; zapamatuju si natoceni hlavy
+      let thisHeading heading
+      
+      ; posunu o jeden patch
+      forward 1
+      
+      ; znovu otocim k novemu patchi
+      face new-location
+ 
+    let whoNewLocation [ who ] of new-location
+    
+    if any? nodes in-radius 3 with [ who = whoNewLocation ]
+    [
+      setxy [xcor] of new-location [ycor] of new-location
+      set heading thisHeading
+      set location new-location
+      set new-location nobody
+    ]
+  ]
+end
+
+
+to fireman-is-on-fire
+  output-print (word "robot " self " found fire")
+
+  set going-to-fire? false
+  set extinguishing? true
+  set returning-to-base? false
+  set fire-path []
+  set location nobody
+  set new-location nobody
+end
+
+
+to return-to-base
+  output-print (word "robot " self " is returning to base")
+
+  set going-to-fire? false
+  set extinguishing? false
+  set returning-to-base? true
+  set fire-path get-shortest-path firing-node
+  set fire-in-radius 0
+  set firing-node nobody
+  set location firing-node
+  set new-location nobody
+end
+
+to fireman-is-back-in-base
+  output-print (word "robot " self " is back in base")
+    
+  die  
+end
+
+
+to stop-the-fire
+
+;  let thisRadius min (list fire-in-radius (random fire-finder-max-radius) 10 )
+  ifelse tree-to-extinguish != nobody  ; mam co hasit
+  [
+    output-print (word "agent " self " going to tree " tree-to-extinguish)
+  
+    face tree-to-extinguish
+    forward 1
+    face tree-to-extinguish
+    
+    put-out-the-fire tree-to-extinguish
+  ]
+  [
+    let thisRadius fire-finder-max-radius
+    let burningTrees trees in-radius thisRadius with [ burning? ]
+    
+    output-print (word "agent " self " see burning trees " burningTrees " in radius " thisRadius )
+    
+    ifelse any? burningTrees ; pokud vidim nejaky strom
+    [
+      set tree-to-extinguish one-of burningTrees
+      ask tree-to-extinguish
+      [
+        set found? true
+      ]
+    ]
+    [ ; jinak se vracim k bodu
+      face firing-node
+      forward 1
+      face firing-node
+      
+      ; otestuji zda prisel zpet na node odkud zacal hasit
+      let whoFiringNode [ who ] of firing-node
+      if any? nodes in-radius 3 with [ who = whoFiringNode ]
+      [
+        setxy [xcor] of firing-node [ycor] of firing-node
+        return-to-base
+      ]    
+    ]    
+  ]
+  
+end
+
+to put-out-the-fire [ tree-in-fire ]
+  let whoTree [who] of tree-in-fire
+  
+  if any? trees in-radius 3 with [ who = whoTree ]
+  [ 
+    set tree-to-extinguish nobody 
+    set trees-rescued trees-rescued + 1  
+    
+    ask tree-in-fire
+    [
+      set points 0
+      set live? false
+      set burning? false
+      set found? false
+      set dead? true
+      set shape "tree"
+      set color gray
+    ]
+  ]
+end

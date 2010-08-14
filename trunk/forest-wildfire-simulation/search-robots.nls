@@ -1,0 +1,176 @@
+
+to setup-search-robots
+
+  ask fire-finders
+  [
+    die
+  ]
+
+  ask base
+  [
+    let thisBase self
+    hatch-fire-finders search-robots-count
+    [
+      set shape "airplane 2"
+      set size 10
+      set color magenta
+      
+      set fire-found? false
+      set fire-node nobody
+      set base-path []
+      set fire-radius 0
+      
+      set location thisBase
+      set new-location nobody
+    ]
+  ]
+  
+end
+
+to search-robots-go
+
+  ask fire-finders
+  [
+    ifelse fire-found?
+    [ 
+      move-search-robot-to-base
+      set color violet
+    ]
+    [
+      move-search-robot-to-fire
+      set color magenta
+    ]
+  ]
+end
+
+to search-for-fire [robot newLocation]
+    let thisRadius min (list 10 (random fire-finder-max-radius))
+    let burningTrees trees in-radius thisRadius with [ burning? and not found? ]
+    if any? burningTrees
+    [
+      ask burningTrees
+      [
+        set found? true
+      ]
+      
+      ask robot
+      [        
+        set fire-found? true
+        set fire-node newLocation
+        set base-path get-shortest-path newLocation
+        set fire-radius thisRadius
+        
+        output-print (word "robot " self " found burning trees " burningTrees " path " base-path )
+      ]
+    ]
+end
+
+to move-search-robot-to-fire
+    let thisFinder self
+    let thisWho who
+      
+    if new-location = nobody
+    [
+      set new-location one-of [ link-neighbors ] of location
+    ]
+
+    ; otocime agenta do nove lokace
+    face new-location
+    ; zapamatuju si natoceni hlavy
+    let thisHeading heading
+    
+    ; posunu o jeden patch
+    forward 1
+    
+    ; znovu otocim k novemu patchi
+    face new-location
+
+    let whoNewLocation [ who ] of new-location
+    
+    if any? nodes in-radius 3 with [ who = whoNewLocation ]
+    [
+      setxy [xcor] of new-location [ycor] of new-location
+      set heading thisHeading
+      set location new-location
+      set new-location nobody
+      
+      search-for-fire self location
+    ]
+end
+
+to move-search-robot-to-base
+    let thisFinder self
+    let thisWho who
+     
+    ; pokud jiz nemuzu vybrat cestu a nova lokace neni nastavena, tak jsem v bazi
+    ifelse empty? base-path and new-location = nobody
+    [      
+      search-robot-in-base
+    ]
+    [ ; cestuji do baze
+      if new-location = nobody
+      [ 
+        set new-location first base-path
+        set base-path but-first base-path        
+      ]
+    
+      ; otocime agenta do nove lokace
+      face new-location
+      ; zapamatuju si natoceni hlavy
+      let thisHeading heading
+      
+      ; posunu o jeden patch
+      forward 1
+      
+      ; znovu otocim k novemu patchi
+      face new-location
+ 
+    let whoNewLocation [ who ] of new-location
+    
+    if any? nodes in-radius 3 with [ who = whoNewLocation ]
+    [
+      setxy [xcor] of new-location [ycor] of new-location
+      set heading thisHeading
+      set location new-location
+      set new-location nobody
+    ]
+  ]
+end
+
+to search-robot-in-base
+  output-print (word "robot " self " is in base")
+  
+  let thisFireSearcher self
+  
+  hatch-firemen 1
+  [
+    set shape "bulldozer top"
+    set size 10
+    set color blue
+    
+    set going-to-fire? true
+    set extinguishing? false
+    set returning-to-base? false
+    set fire-path reverse get-shortest-path [fire-node] of thisFireSearcher
+    set firing-node [fire-node] of thisFireSearcher
+    set fire-in-radius [fire-radius] of thisFireSearcher
+    set location base
+    set new-location nobody
+    set tree-to-extinguish nobody
+  ]
+  
+  leave-base
+end
+
+to leave-base
+  output-print (word "robot " self " is leaving base")
+
+  set fire-found? false
+  set fire-node nobody
+  set base-path []
+  set fire-radius 0
+
+  set location base
+  set new-location nobody  
+
+end
