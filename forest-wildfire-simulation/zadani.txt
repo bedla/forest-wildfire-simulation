@@ -7,3 +7,5 @@ Realizuje v NetLogu stejný nebo podobný experiment, tj. implementujte stejné (po
 Vypracujte dokumentaci – zejména popište pùvodní a váš experiment a nezapomeòte uvést odkazy na zdroje.
 
 Termíny: do 15.4. si zvolte téma a pøijïte je zkonzultovat na cvièení; do 15.5. odevzdejte projekt pøes WebCT. 
+
+TEST
