@@ -16,4 +16,4 @@ _Note:_
   1. And of course you will need NetLogo itself. Download it from [here](http://ccl.northwestern.edu/netlogo/download.shtml).
 
 _Screenshot:_
-<img src='http://forest-wildfire-simulation.googlecode.com/svn/trunk/forest-wildfire-simulation/screenshot.png' border='0' />
+<img src='https://raw.githubusercontent.com/bedla/forest-wildfire-simulation/master/screenshot.png' border='0' />
